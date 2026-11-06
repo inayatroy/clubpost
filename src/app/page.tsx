@@ -44,7 +44,8 @@ export default function Home() {
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-10 md:grid-cols-2">
         <div>
           <p className="mb-4 inline-block rounded-full bg-mint px-3 py-1 text-sm font-medium">
-            Built for student orgs 🎓  · by Inayat Roy
+            Built for student orgs 🎓
+            · by Inayat Roy
           </p>
           <h1 className="font-[family-name:var(--font-display)] text-5xl font-bold leading-[1.05] md:text-6xl">
             Your club&apos;s social media, done before your coffee cools.
