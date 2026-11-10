@@ -1,3 +1,9 @@
+import Link from "next/link";
+import { getUser } from "@/lib/auth";
+import { Nav } from "./components";
+
+export const dynamic = "force-dynamic";
+
 const steps = [
   {
     n: "1",
@@ -23,29 +29,17 @@ const features = [
   { emoji: "🔁", title: "Hand-offs without the chaos", body: "New social chair? Your club's voice and past posts stay in the account." },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const user = await getUser();
   return (
     <main className="min-h-screen">
-      {/* Nav */}
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <a href="#" className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight">
-          Club<span className="text-coral">Post</span>
-        </a>
-        <div className="flex items-center gap-6 text-sm font-medium">
-          <a href="#how" className="hidden sm:inline hover:text-coral">How it works</a>
-          <a href="#pricing" className="hidden sm:inline hover:text-coral">Pricing</a>
-          <a href="#pricing" className="rounded-full bg-ink px-4 py-2 text-cream hover:bg-coral">
-            Get started
-          </a>
-        </div>
-      </nav>
+      <Nav user={user} />
 
       {/* Hero */}
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-6 pb-20 pt-10 md:grid-cols-2">
         <div>
           <p className="mb-4 inline-block rounded-full bg-mint px-3 py-1 text-sm font-medium">
-            Built for student orgs 🎓
-            · by Inayat Roy
+            Built for student orgs 🎓 · by Inayat Roy
           </p>
           <h1 className="font-[family-name:var(--font-display)] text-5xl font-bold leading-[1.05] md:text-6xl">
             Your club&apos;s social media, done before your coffee cools.
@@ -55,9 +49,9 @@ export default function Home() {
             and a week of posts — in your club&apos;s voice.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#pricing" className="rounded-full bg-coral px-6 py-3 font-semibold text-white shadow-[4px_4px_0_0_#1d2340] transition hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#1d2340]">
-              Try it free
-            </a>
+            <Link href={user ? "/dashboard" : "/signup"} className="rounded-full bg-coral px-6 py-3 font-semibold text-white shadow-[4px_4px_0_0_#1d2340] transition hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_0_#1d2340]">
+              {user ? "Go to my dashboard" : "Try it free"}
+            </Link>
             <a href="#how" className="rounded-full border-2 border-ink px-6 py-3 font-semibold hover:bg-ink hover:text-cream">
               See how it works
             </a>
@@ -125,31 +119,44 @@ export default function Home() {
       {/* Pricing */}
       <section id="pricing" className="mx-auto max-w-6xl px-6 pb-24">
         <h2 className="text-center font-[family-name:var(--font-display)] text-4xl font-bold">Cheaper than one round of flyers</h2>
-        <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-2">
-          <div className="rounded-3xl border-2 border-ink/15 bg-white p-8">
+        <p className="mt-3 text-center text-ink/70">Start free. Upgrade when your club is hooked.</p>
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="flex flex-col rounded-3xl border-2 border-ink/15 bg-white p-8">
             <h3 className="text-lg font-semibold">Free</h3>
             <p className="mt-2 text-4xl font-bold">$0</p>
-            <ul className="mt-6 space-y-2 text-ink/75">
+            <ul className="mt-6 flex-1 space-y-2 text-ink/75">
               <li>✓ 3 posts per month</li>
-              <li>✓ Captions + hashtags</li>
-              <li>✓ 1 club voice</li>
+              <li>✓ Caption, hashtags, reel script</li>
+              <li>✓ Week-of-posts plan</li>
             </ul>
-            <a href="#" className="mt-8 block rounded-full border-2 border-ink py-3 text-center font-semibold hover:bg-ink hover:text-cream">
-              Coming soon
-            </a>
+            <Link href={user ? "/dashboard" : "/signup"} className="mt-8 block rounded-full border-2 border-ink py-3 text-center font-semibold hover:bg-ink hover:text-cream">
+              {user ? "Go to dashboard" : "Start free"}
+            </Link>
           </div>
-          <div className="relative rounded-3xl border-2 border-ink bg-white p-8 shadow-[6px_6px_0_0_#ff6b4a]">
+          <div className="relative flex flex-col rounded-3xl border-2 border-ink bg-white p-8 shadow-[6px_6px_0_0_#ff6b4a]">
             <span className="absolute -top-3 right-6 rounded-full bg-sun px-3 py-1 text-xs font-bold">Most clubs pick this</span>
             <h3 className="text-lg font-semibold">Club Pro</h3>
-            <p className="mt-2 text-4xl font-bold">$5<span className="text-base font-normal text-ink/60">/month</span></p>
-            <ul className="mt-6 space-y-2 text-ink/75">
+            <p className="mt-2 text-4xl font-bold">$12<span className="text-base font-normal text-ink/60">/month</span></p>
+            <ul className="mt-6 flex-1 space-y-2 text-ink/75">
               <li>✓ Unlimited posts</li>
-              <li>✓ Reel scripts + story text</li>
-              <li>✓ Weekly content calendar</li>
-              <li>✓ Saved club voice for every officer</li>
+              <li>✓ Saved club voice</li>
+              <li>✓ Full post history for the next officer</li>
+              <li>✓ For student organizations</li>
             </ul>
-            <a href="#" className="mt-8 block rounded-full bg-coral py-3 text-center font-semibold text-white hover:bg-ink">
-              Coming soon
+            <a href="/api/checkout?plan=club_pro" className="mt-8 block rounded-full bg-coral py-3 text-center font-semibold text-white hover:bg-ink">
+              Get Club Pro
+            </a>
+          </div>
+          <div className="flex flex-col rounded-3xl border-2 border-ink/15 bg-white p-8">
+            <h3 className="text-lg font-semibold">Business</h3>
+            <p className="mt-2 text-4xl font-bold">$29<span className="text-base font-normal text-ink/60">/month</span></p>
+            <ul className="mt-6 flex-1 space-y-2 text-ink/75">
+              <li>✓ Everything in Club Pro</li>
+              <li>✓ Built for local cafés, gyms &amp; shops</li>
+              <li>✓ Promos, launches and weekly specials</li>
+            </ul>
+            <a href="/api/checkout?plan=business" className="mt-8 block rounded-full border-2 border-ink py-3 text-center font-semibold hover:bg-ink hover:text-cream">
+              Get Business
             </a>
           </div>
         </div>
